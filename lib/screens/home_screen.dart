@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:qr_code_scanner/screens/scanner_result_screen.dart';
 import 'package:qr_code_scanner/widgets/scanner_button.dart';
 import 'package:qr_code_scanner/widgets/scanner_frame.dart';
 
@@ -18,12 +19,36 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   bool isFlashlightOn = false;
+  bool isScanning = false;
 
   void toggleFlashlight() {
     scannerController.toggleTorch();
     setState(() {
       isFlashlightOn = !isFlashlightOn;
     });
+  }
+
+  void onDetect(BarcodeCapture capturedBarcode) {
+    if (isScanning) {
+      return;
+    }
+
+    List<Barcode> barcodes = capturedBarcode.barcodes;
+    if (barcodes.isNotEmpty) {
+      isScanning = true;
+
+      String? code = barcodes.first.rawValue;
+      if (code != null) {
+        toggleFlashlight();
+        Navigator.pushNamed(
+          context,
+          ScannerResultScreen.routeName,
+          arguments: code,
+        ).then((value) {
+          isScanning = false;
+        });
+      }
+    }
   }
 
   @override
@@ -34,6 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             MobileScanner(
               controller: scannerController,
+              onDetect: onDetect,
             ),
             Center(
               child: CustomPaint(
