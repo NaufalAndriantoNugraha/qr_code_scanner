@@ -13,7 +13,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  MobileScannerController scannerController = MobileScannerController();
+  MobileScannerController scannerController = MobileScannerController(
+    torchEnabled: false,
+  );
+
+  bool isFlashlightOn = false;
+
+  void toggleFlashlight() {
+    scannerController.toggleTorch();
+    setState(() {
+      isFlashlightOn = !isFlashlightOn;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,11 +77,11 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             ScannerButton(
               width: 160,
-              icon: Icons.flash_off,
-              label: 'Flashlight off',
+              icon: isFlashlightOn ? Icons.flash_on : Icons.flash_off,
+              label: isFlashlightOn ? 'Flashlight On' : 'Flashlight Off',
               foregroundColor: Colors.white,
               backgroundColor: Colors.black,
-              onTap: () {},
+              onTap: () => toggleFlashlight(),
             ),
             ScannerButton(
               width: 160,
