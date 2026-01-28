@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/styles/my_custom_colors.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ScannerResultScreen extends StatefulWidget {
   static const String routeName = '/scanner_result_screen';
@@ -12,6 +13,12 @@ class ScannerResultScreen extends StatefulWidget {
 }
 
 class _ScannerResultScreenState extends State<ScannerResultScreen> {
+  Future<void> openUrl(String url) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String args = ModalRoute.of(context)!.settings.arguments as String;
@@ -76,26 +83,29 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
             data: qrCode,
             size: 290,
           ),
-          Container(
-            width: 280,
-            padding: EdgeInsets.symmetric(
-              vertical: 12,
-              horizontal: 8,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.blueAccent[200],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              spacing: 10,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.open_in_new, color: Colors.white),
-                Text(
-                  qrCode,
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ],
+          GestureDetector(
+            onTap: () => openUrl(qrCode),
+            child: Container(
+              width: 280,
+              padding: EdgeInsets.symmetric(
+                vertical: 12,
+                horizontal: 8,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.blueAccent[200],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                spacing: 10,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.open_in_new, color: Colors.white),
+                  Text(
+                    qrCode,
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
