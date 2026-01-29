@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qr_code_scanner/screens/scanner_result_screen.dart';
 import 'package:qr_code_scanner/widgets/scanner_button.dart';
@@ -33,13 +34,44 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
+    if (isFlashlightOn) {
+      toggleFlashlight();
+    }
+
     List<Barcode> barcodes = capturedBarcode.barcodes;
     if (barcodes.isNotEmpty) {
       isScanning = true;
 
       String? code = barcodes.first.rawValue;
       if (code != null) {
-        toggleFlashlight();
+        Navigator.pushNamed(
+          context,
+          ScannerResultScreen.routeName,
+          arguments: code,
+        ).then((value) {
+          isScanning = false;
+        });
+      }
+    }
+  }
+
+  Future<void> pickImageFromGallery() async {
+    ImagePicker imagePicker = ImagePicker();
+    XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      scanImageFromGallery(image.path);
+    }
+  }
+
+  void scanImageFromGallery(String path) async {
+    if (isFlashlightOn) {
+      toggleFlashlight();
+    }
+
+    BarcodeCapture? barcode = await scannerController.analyzeImage(path);
+    if (barcode != null && barcode.barcodes.isNotEmpty) {
+      String code = barcode.barcodes.first.rawValue!;
+      if (mounted) {
         Navigator.pushNamed(
           context,
           ScannerResultScreen.routeName,
@@ -93,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Import from Gallery',
             foregroundColor: Colors.black,
             backgroundColor: Colors.white,
-            onTap: () {},
+            onTap: () => pickImageFromGallery(),
           ),
         ),
         Row(
