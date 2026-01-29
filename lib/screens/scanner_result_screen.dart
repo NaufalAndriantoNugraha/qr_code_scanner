@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:qr_code_scanner/models/qr_code_model.dart';
+import 'package:qr_code_scanner/services/database.dart';
 import 'package:qr_code_scanner/styles/my_custom_colors.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,10 +15,19 @@ class ScannerResultScreen extends StatefulWidget {
 }
 
 class _ScannerResultScreenState extends State<ScannerResultScreen> {
+  QrCodeDatabase qrCodeDatabase = QrCodeDatabase();
+  TextEditingController qrCodeController = TextEditingController();
+
   Future<void> openUrl(String url) async {
     if (!await launchUrl(Uri.parse(url))) {
       throw Exception('Could not launch $url');
     }
+  }
+
+  Future<void> saveQrCode(String name, String link) async {
+    await qrCodeDatabase.insertQrCodes(
+      QrCodeModel(name: name, link: link),
+    );
   }
 
   @override
@@ -40,7 +51,7 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
             child: Column(
               spacing: 20,
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [qrCodeTips(), qrCodeView(args), qrCodeForm()],
+              children: [qrCodeTips(), qrCodeView(args), qrCodeForm(args)],
             ),
           ),
         ),
@@ -122,13 +133,14 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
     );
   }
 
-  Widget qrCodeForm() {
+  Widget qrCodeForm(String qrCodeLink) {
     return Column(
       spacing: 20,
       children: [
         SizedBox(
           width: 330,
           child: TextField(
+            controller: qrCodeController,
             maxLength: 25,
             cursorColor: Colors.black,
             decoration: InputDecoration(
@@ -150,19 +162,31 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
             style: TextStyle(backgroundColor: Colors.white),
           ),
         ),
-        Container(
-          width: 330,
-          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
-          decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            'SAVE QR CODE',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+        GestureDetector(
+          onTap: () async {
+            String name = qrCodeController.value.text;
+            String link = qrCodeLink;
+            if (name.isNotEmpty) {
+              await saveQrCode(name, link);
+            }
+            if (mounted) {
+              Navigator.pop(context);
+            }
+          },
+          child: Container(
+            width: 330,
+            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              'SAVE QR CODE',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),

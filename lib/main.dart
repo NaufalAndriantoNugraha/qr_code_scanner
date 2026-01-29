@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/screens/home_screen.dart';
+import 'package:qr_code_scanner/screens/saved_qr_code_screen.dart';
 import 'package:qr_code_scanner/screens/scanner_result_screen.dart';
 
 void main() {
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       routes: {
         HomeScreen.routeName: (context) => HomeScreen(),
         ScannerResultScreen.routeName: (context) => ScannerResultScreen(),
+        SavedQrCodeScreen.routeName: (context) => SavedQrCodeScreen(),
       },
     );
   }

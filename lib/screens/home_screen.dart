@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:qr_code_scanner/screens/saved_qr_code_screen.dart';
 import 'package:qr_code_scanner/screens/scanner_result_screen.dart';
 import 'package:qr_code_scanner/widgets/scanner_button.dart';
 import 'package:qr_code_scanner/widgets/scanner_frame.dart';
@@ -147,7 +148,8 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Saved QR Code',
               foregroundColor: Colors.white,
               backgroundColor: Colors.black,
-              onTap: () {},
+              onTap: () =>
+                  Navigator.pushNamed(context, SavedQrCodeScreen.routeName),
             ),
           ],
         ),
