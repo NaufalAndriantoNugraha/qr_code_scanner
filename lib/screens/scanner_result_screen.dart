@@ -34,12 +34,14 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
         title: Text('QR Code Scanner'),
         centerTitle: true,
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: 20,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [qrCodeTips(), qrCodeView(args), qrCodeForm()],
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              spacing: 20,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [qrCodeTips(), qrCodeView(args), qrCodeForm()],
+            ),
           ),
         ),
       ),
@@ -52,7 +54,7 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: BoxBorder.all(color: Colors.blueAccent),
+        border: BoxBorder.all(color: Colors.black),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -60,7 +62,9 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.info_outline),
-          Flexible(child: Text('Save the QR code so you can access it later!')),
+          Flexible(
+            child: Text('Save the QR code so you can access it later!'),
+          ),
         ],
       ),
     );
@@ -92,17 +96,22 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
                 horizontal: 8,
               ),
               decoration: BoxDecoration(
-                color: Colors.blueAccent[200],
+                border: BoxBorder.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 spacing: 10,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.open_in_new, color: Colors.white),
-                  Text(
-                    qrCode,
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  Icon(Icons.open_in_new, color: Colors.black),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        qrCode,
+                        style: TextStyle(color: Colors.black, fontSize: 18),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -121,19 +130,21 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
           width: 330,
           child: TextField(
             maxLength: 25,
-            cursorColor: Colors.blueAccent,
+            cursorColor: Colors.black,
             decoration: InputDecoration(
               counterText: '',
               isDense: true,
               filled: true,
               fillColor: Colors.white,
               hintText: 'Enter QR Code name...',
-              focusColor: Colors.blueAccent,
+              focusColor: Colors.black,
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blueAccent),
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.black),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blueAccent),
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.black),
               ),
             ),
             style: TextStyle(backgroundColor: Colors.white),
@@ -143,7 +154,7 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
           width: 330,
           padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
           decoration: BoxDecoration(
-            color: Colors.blueAccent,
+            color: Colors.black,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
