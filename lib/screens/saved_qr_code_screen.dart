@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/models/qr_code_model.dart';
+import 'package:qr_code_scanner/screens/qr_code_detail_screen.dart';
 import 'package:qr_code_scanner/services/database.dart';
 import 'package:qr_code_scanner/styles/my_custom_colors.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -66,28 +67,35 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
   }
 
   Widget listTile(QrCodeModel qrCode) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        spacing: 10,
-        children: [
-          QrImageView(data: qrCode.link, size: 80),
-          listTileContent(qrCode),
-          IconButton(
-            onPressed: () async {
-              if (qrCode.id != null) {
-                await QrCodeDatabase().deleteQrCode(qrCode.id!);
-                setState(() {});
-              }
-            },
-            icon: Icon(Icons.delete),
-          ),
-        ],
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(
+        context,
+        QrCodeDetailScreen.routeName,
+        arguments: qrCode,
+      ).then((_) => setState(() {})),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          spacing: 10,
+          children: [
+            QrImageView(data: qrCode.link, size: 80),
+            listTileContent(qrCode),
+            IconButton(
+              onPressed: () async {
+                if (qrCode.id != null) {
+                  await QrCodeDatabase().deleteQrCode(qrCode.id!);
+                  setState(() {});
+                }
+              },
+              icon: Icon(Icons.delete),
+            ),
+          ],
+        ),
       ),
     );
   }
