@@ -168,9 +168,13 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
             String link = qrCodeLink;
             if (name.isNotEmpty) {
               await saveQrCode(name, link);
-            }
-            if (mounted) {
-              Navigator.pop(context);
+              SnackBar snackBar = customSnackBar(
+                'Successfully saved QR code!',
+              );
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                Navigator.pop(context);
+              }
             }
           },
           child: Container(
@@ -191,6 +195,27 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  SnackBar customSnackBar(String message) {
+    return SnackBar(
+      content: Row(
+        spacing: 10,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.info, color: Colors.black),
+          Text(message, style: TextStyle(color: Colors.black)),
+        ],
+      ),
+      margin: EdgeInsets.only(
+        bottom: MediaQuery.of(context).size.height - 100,
+        right: 15,
+        left: 15,
+      ),
+      dismissDirection: DismissDirection.none,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.white,
     );
   }
 }
