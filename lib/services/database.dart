@@ -45,4 +45,13 @@ class QrCodeDatabase {
       return QrCodeModel.fromJson(qrCodes[index]);
     });
   }
+
+  Future<int> deleteQrCode(int id) async {
+    Database db = await getDatabase();
+    return await db.delete(
+      'qr_codes',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }

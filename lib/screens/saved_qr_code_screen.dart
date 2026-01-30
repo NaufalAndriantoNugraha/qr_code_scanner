@@ -33,7 +33,9 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: Colors.black,
+              ),
             );
           }
 
@@ -45,45 +47,62 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
 
           return SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              padding: const EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: 8,
+              ),
               child: ListView.builder(
                 itemCount: qrCodes.length,
                 itemBuilder: (context, index) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      spacing: 10,
-                      children: [
-                        QrImageView(
-                          data: qrCodes[index].link,
-                          size: 80,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              qrCodes[index].name,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                            ),
-                            Text(qrCodes[index].link),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
+                  QrCodeModel currentIndex = qrCodes[index];
+                  return listTile(currentIndex);
                 },
               ),
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget listTile(QrCodeModel qrCode) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        spacing: 10,
+        children: [
+          QrImageView(data: qrCode.link, size: 80),
+          listTileContent(qrCode),
+          IconButton(
+            onPressed: () async {
+              if (qrCode.id != null) {
+                await QrCodeDatabase().deleteQrCode(qrCode.id!);
+                setState(() {});
+              }
+            },
+            icon: Icon(Icons.delete),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget listTileContent(QrCodeModel qrCode) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            qrCode.name,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+          Text(qrCode.link),
+        ],
       ),
     );
   }
