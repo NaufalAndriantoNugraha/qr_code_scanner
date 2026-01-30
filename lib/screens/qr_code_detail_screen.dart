@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/models/qr_code_model.dart';
+import 'package:qr_code_scanner/widgets/qr_code_button.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -52,7 +53,7 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 qrCodeView(qrCode.link),
-                qrCodeForm(qrCode),
+                qrCodeForm(qrCode, qrCodeController),
               ],
             ),
           ),
@@ -107,22 +108,35 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
     );
   }
 
-  Widget qrCodeForm(QrCodeModel qrCode) {
+  Widget qrCodeForm(
+    QrCodeModel qrCode,
+    TextEditingController qrCodeController,
+  ) {
     return Column(
       spacing: 20,
       children: [
         SizedBox(
           width: 330,
-          child: TextField(
+          child: TextFormField(
             controller: qrCodeController,
             maxLength: 25,
             cursorColor: Colors.black,
+            validator: (name) {
+              if (name == null || name.isEmpty) {
+                return 'Name cannot be empty';
+              }
+              if (name.length < 5) {
+                return 'Minimum 3 characters required';
+              }
+              return null;
+            },
             decoration: InputDecoration(
               counterText: '',
               isDense: true,
               filled: true,
               fillColor: Colors.white,
               hintText: 'Enter QR Code name...',
+              iconColor: Colors.black,
               focusColor: Colors.black,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -136,51 +150,39 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
             style: TextStyle(backgroundColor: Colors.white),
           ),
         ),
-        GestureDetector(
-          onTap: () async {
-            String name = qrCodeController.value.text;
-            if (name.isNotEmpty) {}
-          },
-          child: Container(
-            width: 330,
-            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(8),
+        Column(
+          spacing: 15,
+          children: [
+            QrCodeButton(
+              qrCode: qrCode,
+              onTap: () async {
+                String name = qrCodeController.value.text;
+                if (name.isNotEmpty) {
+                  await QrCodeDatabase().updateQrCodeName(
+                    qrCode.id!,
+                    qrCodeController.text,
+                  );
+                }
+              },
+              width: 330,
+              label: 'RENAME QR CODE',
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.black,
             ),
-            child: Text(
-              'RENAME QR CODE',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+            QrCodeButton(
+              qrCode: qrCode,
+              onTap: () async {
+                await QrCodeDatabase().deleteQrCode(qrCode.id!);
+                if (mounted) {
+                  Navigator.pop(context);
+                }
+              },
+              width: 330,
+              label: 'DELETE QR CODE',
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.redAccent,
             ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () async {
-            await QrCodeDatabase().deleteQrCode(qrCode.id!);
-            if (mounted) {
-              Navigator.pop(context);
-            }
-          },
-          child: Container(
-            width: 330,
-            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
-            decoration: BoxDecoration(
-              color: Colors.redAccent,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              'DELETE QR CODE',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          ],
         ),
       ],
     );

@@ -54,4 +54,14 @@ class QrCodeDatabase {
       whereArgs: [id],
     );
   }
+
+  Future<int> updateQrCodeName(int id, String newName) async {
+    Database db = await getDatabase();
+    return await db.update(
+      'qr_codes',
+      {'name': newName},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }
