@@ -94,7 +94,8 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: scannerController,
               onDetect: onDetect,
             ),
-            Center(
+            Align(
+              alignment: Alignment(0, -0.25),
               child: CustomPaint(
                 size: Size(280, 280),
                 painter: ScannerFrame(),
