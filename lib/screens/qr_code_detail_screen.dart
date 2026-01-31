@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../services/database.dart';
 import '../styles/my_custom_colors.dart';
+import '../widgets/qr_code_dialog.dart';
 
 class QrCodeDetailScreen extends StatefulWidget {
   static const String routeName = '/qr_code_detail_screen';
@@ -171,11 +172,29 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
             ),
             QrCodeButton(
               qrCode: qrCode,
-              onTap: () async {
-                await QrCodeDatabase().deleteQrCode(qrCode.id!);
-                if (mounted) {
-                  Navigator.pop(context);
-                }
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return QrCodeDialog(
+                      title: 'Delete QR Code',
+                      content:
+                          "Are you sure want to delete '${qrCode.name}' QR code? This action can't be undo!",
+                      onTap: () async {
+                        if (mounted) {
+                          if (qrCode.id != null) {
+                            Navigator.popUntil(
+                              context,
+                              ModalRoute.withName('/saved_qr_code_screen'),
+                            );
+                            await QrCodeDatabase().deleteQrCode(qrCode.id!);
+                            setState(() {});
+                          }
+                        }
+                      },
+                    );
+                  },
+                );
               },
               width: 330,
               label: 'DELETE QR CODE',
