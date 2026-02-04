@@ -142,11 +142,16 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
 
   Widget listTile(QrCodeModel qrCode) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(
-        context,
-        QrCodeDetailScreen.routeName,
-        arguments: qrCode,
-      ).then((_) => setState(() {})),
+      onTap: () async {
+        await Navigator.pushNamed(
+          context,
+          QrCodeDetailScreen.routeName,
+          arguments: qrCode,
+        );
+        setState(() {
+          qrFutureData = QrCodeDatabase().getQrCodes();
+        });
+      },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
         margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
@@ -190,7 +195,9 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
           if (qrCode.id != null) {
             Navigator.pop(context);
             await QrCodeDatabase().deleteQrCode(qrCode.id!);
-            setState(() {});
+            setState(() {
+              qrFutureData = QrCodeDatabase().getQrCodes();
+            });
           }
         }
       },

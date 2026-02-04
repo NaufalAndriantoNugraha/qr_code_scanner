@@ -176,23 +176,7 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
                 showDialog(
                   context: context,
                   builder: (context) {
-                    return QrCodeDialog(
-                      title: 'Delete QR Code',
-                      content:
-                          "Are you sure want to delete '${qrCode.name}' QR code? This action can't be undo!",
-                      onTap: () async {
-                        if (mounted) {
-                          if (qrCode.id != null) {
-                            Navigator.popUntil(
-                              context,
-                              ModalRoute.withName('/saved_qr_code_screen'),
-                            );
-                            await QrCodeDatabase().deleteQrCode(qrCode.id!);
-                            setState(() {});
-                          }
-                        }
-                      },
-                    );
+                    return qrCodeFormDialog(qrCode);
                   },
                 );
               },
@@ -204,6 +188,25 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget qrCodeFormDialog(QrCodeModel qrCode) {
+    return QrCodeDialog(
+      title: 'Delete QR Code',
+      content:
+          "Are you sure want to delete '${qrCode.name}' QR code? This action can't be undo!",
+      onTap: () async {
+        if (qrCode.id != null) {
+          await QrCodeDatabase().deleteQrCode(qrCode.id!);
+          if (mounted) {
+            Navigator.popUntil(
+              context,
+              ModalRoute.withName('/saved_qr_code_screen'),
+            );
+          }
+        }
+      },
     );
   }
 }
