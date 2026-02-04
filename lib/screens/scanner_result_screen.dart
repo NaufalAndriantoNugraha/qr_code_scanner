@@ -51,7 +51,11 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
             child: Column(
               spacing: 20,
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [qrCodeTips(), qrCodeView(args), qrCodeForm(args)],
+              children: [
+                qrCodeTips(),
+                qrCodeView(args),
+                qrCodeForm(args),
+              ],
             ),
           ),
         ),
@@ -98,37 +102,44 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
             data: qrCode,
             size: 290,
           ),
-          GestureDetector(
-            onTap: () => openUrl(qrCode),
-            child: Container(
-              width: 280,
-              padding: EdgeInsets.symmetric(
-                vertical: 12,
-                horizontal: 8,
-              ),
-              decoration: BoxDecoration(
-                border: BoxBorder.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                spacing: 10,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.open_in_new, color: Colors.black),
-                  Flexible(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Text(
-                        qrCode,
-                        style: TextStyle(color: Colors.black, fontSize: 18),
-                      ),
-                    ),
+          qrCodeLink(qrCode),
+        ],
+      ),
+    );
+  }
+
+  Widget qrCodeLink(String qrCode) {
+    return GestureDetector(
+      onTap: () => openUrl(qrCode),
+      child: Container(
+        width: 280,
+        padding: EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 8,
+        ),
+        decoration: BoxDecoration(
+          border: BoxBorder.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          spacing: 10,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.open_in_new, color: Colors.black),
+            Flexible(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Text(
+                  qrCode,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -162,39 +173,46 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
             style: TextStyle(backgroundColor: Colors.white),
           ),
         ),
-        GestureDetector(
-          onTap: () async {
-            String name = qrCodeController.value.text;
-            String link = qrCodeLink;
-            if (name.isNotEmpty) {
-              await saveQrCode(name, link);
-              SnackBar snackBar = customSnackBar(
-                'Successfully saved QR code!',
-              );
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                Navigator.pop(context);
-              }
-            }
-          },
-          child: Container(
-            width: 330,
-            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              'SAVE QR CODE',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+        qrCodeFormButton(qrCodeLink),
+      ],
+    );
+  }
+
+  Widget qrCodeFormButton(String qrCodeLink) {
+    return GestureDetector(
+      onTap: () async {
+        String name = qrCodeController.value.text.trim();
+        String link = qrCodeLink;
+        if (name.isNotEmpty) {
+          await saveQrCode(name, link);
+          SnackBar snackBar = customSnackBar(
+            'Successfully saved QR code!',
+          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            Navigator.pop(context);
+          }
+        }
+      },
+      child: Container(
+        width: 330,
+        padding: EdgeInsets.symmetric(
+          vertical: 15,
+          horizontal: 5,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          'SAVE QR CODE',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
-      ],
+      ),
     );
   }
 
