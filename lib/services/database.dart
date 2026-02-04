@@ -64,4 +64,19 @@ class QrCodeDatabase {
       whereArgs: [id],
     );
   }
+
+  Future<List<QrCodeModel>> searchQrCode(String name) async {
+    Database db = await getDatabase();
+    List<Map<String, dynamic>> maps = await db.query(
+      'qr_codes',
+      where: 'name LIKE ?',
+      whereArgs: [
+        '%$name%',
+      ],
+      orderBy: 'id DESC',
+    );
+    return List.generate(maps.length, (index) {
+      return QrCodeModel.fromJson(maps[index]);
+    });
+  }
 }

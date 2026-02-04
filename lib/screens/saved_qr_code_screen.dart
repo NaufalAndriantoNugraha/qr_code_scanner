@@ -16,6 +16,25 @@ class SavedQrCodeScreen extends StatefulWidget {
 }
 
 class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
+  late Future<List<QrCodeModel>> qrFutureData;
+  TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    qrFutureData = QrCodeDatabase().getQrCodes();
+  }
+
+  void onSearchChanged(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        qrFutureData = QrCodeDatabase().getQrCodes();
+      } else {
+        qrFutureData = QrCodeDatabase().searchQrCode(query);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,40 +49,81 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
         title: Text('QR Code Scanner'),
         centerTitle: true,
       ),
-      body: FutureBuilder<List<QrCodeModel>>(
-        future: QrCodeDatabase().getQrCodes(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: 12,
+            horizontal: 8,
+          ),
+          child: Column(
+            spacing: 5,
+            children: [
+              textField(),
+              savedQrCode(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget textField() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 4),
+      child: TextField(
+        controller: searchController,
+        cursorColor: Colors.black,
+        onChanged: onSearchChanged,
+        decoration: InputDecoration(
+          hintText: "Search QR code's name...",
+          contentPadding: EdgeInsets.symmetric(
+            vertical: 1,
+            horizontal: 5,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          focusColor: Colors.white,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+          prefixIcon: Icon(Icons.search),
+        ),
+      ),
+    );
+  }
+
+  Widget savedQrCode() {
+    return FutureBuilder(
+      future: qrFutureData,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Expanded(
+            child: Center(
               child: CircularProgressIndicator(
                 color: Colors.black,
               ),
-            );
-          }
-
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Container();
-          }
-
-          List<QrCodeModel> qrCodes = snapshot.data!;
-
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 8,
-                horizontal: 8,
-              ),
-              child: ListView.builder(
-                itemCount: qrCodes.length,
-                itemBuilder: (context, index) {
-                  QrCodeModel currentIndex = qrCodes[index];
-                  return listTile(currentIndex);
-                },
-              ),
             ),
           );
-        },
-      ),
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Container();
+        }
+        List<QrCodeModel> qrCodes = snapshot.data!;
+        return Expanded(
+          child: ListView.builder(
+            itemCount: qrCodes.length,
+            itemBuilder: (context, index) {
+              QrCodeModel currentIndex = qrCodes[index];
+              return listTile(currentIndex);
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -86,33 +146,41 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
           children: [
             QrImageView(data: qrCode.link, size: 80),
             listTileContent(qrCode),
-            IconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return QrCodeDialog(
-                      title: 'Delete QR Code',
-                      content:
-                          "Are you sure want to delete '${qrCode.name}' QR code? This action can't be undo!",
-                      onTap: () async {
-                        if (mounted) {
-                          if (qrCode.id != null) {
-                            Navigator.pop(context);
-                            await QrCodeDatabase().deleteQrCode(qrCode.id!);
-                            setState(() {});
-                          }
-                        }
-                      },
-                    );
-                  },
-                );
-              },
-              icon: Icon(Icons.delete),
-            ),
+            iconButton(qrCode),
           ],
         ),
       ),
+    );
+  }
+
+  Widget iconButton(QrCodeModel qrCode) {
+    return IconButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return qrCodeDialog(qrCode, context);
+          },
+        );
+      },
+      icon: Icon(Icons.delete),
+    );
+  }
+
+  Widget qrCodeDialog(QrCodeModel qrCode, BuildContext context) {
+    return QrCodeDialog(
+      title: 'Delete QR Code',
+      content:
+          "Are you sure want to delete '${qrCode.name}' QR code? This action can't be undo!",
+      onTap: () async {
+        if (mounted) {
+          if (qrCode.id != null) {
+            Navigator.pop(context);
+            await QrCodeDatabase().deleteQrCode(qrCode.id!);
+            setState(() {});
+          }
+        }
+      },
     );
   }
 

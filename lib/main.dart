@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/screens/home_screen.dart';
 import 'package:qr_code_scanner/screens/qr_code_detail_screen.dart';
 import 'package:qr_code_scanner/screens/saved_qr_code_screen.dart';
 import 'package:qr_code_scanner/screens/scanner_result_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]).then((value) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
