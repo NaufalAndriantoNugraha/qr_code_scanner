@@ -69,7 +69,7 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
 
   Widget textField() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4),
+      margin: EdgeInsets.only(left: 4, right: 4, bottom: 4),
       child: TextField(
         controller: searchController,
         cursorColor: Colors.black,
@@ -92,8 +92,21 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
             borderSide: BorderSide.none,
           ),
           prefixIcon: Icon(Icons.search),
+          suffixIcon: searchController.text.isNotEmpty
+              ? cleanSearchQueryButton()
+              : null,
         ),
       ),
+    );
+  }
+
+  Widget cleanSearchQueryButton() {
+    return IconButton(
+      onPressed: () {
+        searchController.text = '';
+        onSearchChanged('');
+      },
+      icon: Icon(Icons.close_outlined),
     );
   }
 
