@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_code_scanner/screens/camera_permission_disabled_screen.dart';
 import 'package:qr_code_scanner/screens/saved_qr_code_screen.dart';
 import 'package:qr_code_scanner/screens/scanner_result_screen.dart';
 import 'package:qr_code_scanner/widgets/scanner_button.dart';
@@ -23,11 +25,30 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isFlashlightOn = false;
   bool isScanning = false;
 
+  @override
+  void initState() {
+    super.initState();
+    checkCameraPermission();
+  }
+
   void toggleFlashlight() {
     scannerController.toggleTorch();
     setState(() {
       isFlashlightOn = !isFlashlightOn;
     });
+  }
+
+  Future<void> checkCameraPermission() async {
+    await Future.delayed(Duration(seconds: 5));
+    var status = await Permission.camera.status;
+    if (status.isDenied || status.isPermanentlyDenied) {
+      if (mounted) {
+        Navigator.pushReplacementNamed(
+          context,
+          CameraPermissionDisabledScreen.routeName,
+        );
+      }
+    }
   }
 
   void onDetect(BarcodeCapture capturedBarcode) {

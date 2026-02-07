@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:qr_code_scanner/screens/camera_permission_disabled_screen.dart';
 import 'package:qr_code_scanner/screens/home_screen.dart';
 import 'package:qr_code_scanner/screens/qr_code_detail_screen.dart';
 import 'package:qr_code_scanner/screens/saved_qr_code_screen.dart';
@@ -26,6 +27,8 @@ class MyApp extends StatelessWidget {
         ScannerResultScreen.routeName: (context) => ScannerResultScreen(),
         SavedQrCodeScreen.routeName: (context) => SavedQrCodeScreen(),
         QrCodeDetailScreen.routeName: (context) => QrCodeDetailScreen(),
+        CameraPermissionDisabledScreen.routeName: (context) =>
+            CameraPermissionDisabledScreen(),
       },
     );
   }
