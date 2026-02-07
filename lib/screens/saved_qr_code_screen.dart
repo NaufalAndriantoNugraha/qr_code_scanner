@@ -18,6 +18,7 @@ class SavedQrCodeScreen extends StatefulWidget {
 class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
   late Future<List<QrCodeModel>> qrFutureData;
   TextEditingController searchController = TextEditingController();
+  final ValueNotifier<int> qrCounter = ValueNotifier<int>(0);
 
   @override
   void initState() {
@@ -48,6 +49,23 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
         ),
         title: Text('QR Code Scanner'),
         centerTitle: true,
+        actions: [
+          ValueListenableBuilder(
+            valueListenable: qrCounter,
+            builder: (context, value, child) {
+              return Container(
+                margin: EdgeInsets.only(right: 20),
+                child: Text(
+                  value.toString(),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -127,6 +145,9 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
           return Container();
         }
         List<QrCodeModel> qrCodes = snapshot.data!;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          qrCounter.value = qrCodes.length;
+        });
         return Expanded(
           child: ListView.builder(
             itemCount: qrCodes.length,
