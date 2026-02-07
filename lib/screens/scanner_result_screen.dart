@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/models/qr_code_model.dart';
 import 'package:qr_code_scanner/services/database.dart';
 import 'package:qr_code_scanner/styles/my_custom_colors.dart';
+import 'package:qr_code_scanner/widgets/qr_code_snackbar.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -185,10 +186,11 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
         String link = qrCodeLink;
         if (name.isNotEmpty) {
           await saveQrCode(name, link);
-          SnackBar snackBar = customSnackBar(
-            'Successfully saved QR code!',
-          );
           if (mounted) {
+            SnackBar snackBar = QrCodeSnackbar.build(
+              context,
+              message: 'Succesfully saved QR Code!',
+            );
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
             Navigator.pop(context);
           }
@@ -213,27 +215,6 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  SnackBar customSnackBar(String message) {
-    return SnackBar(
-      content: Row(
-        spacing: 10,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.info, color: Colors.black),
-          Text(message, style: TextStyle(color: Colors.black)),
-        ],
-      ),
-      margin: EdgeInsets.only(
-        bottom: MediaQuery.of(context).size.height - 100,
-        right: 15,
-        left: 15,
-      ),
-      dismissDirection: DismissDirection.none,
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.white,
     );
   }
 }

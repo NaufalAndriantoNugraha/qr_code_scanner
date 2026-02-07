@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/models/qr_code_model.dart';
 import 'package:qr_code_scanner/widgets/qr_code_button.dart';
+import 'package:qr_code_scanner/widgets/qr_code_snackbar.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -163,6 +164,13 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
                     qrCode.id!,
                     qrCodeController.text,
                   );
+                  if (mounted) {
+                    SnackBar snackbar = QrCodeSnackbar.build(
+                      context,
+                      message: 'Succesfully rename QR Code!',
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                  }
                 }
               },
               width: 330,
