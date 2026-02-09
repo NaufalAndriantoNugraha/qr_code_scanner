@@ -142,7 +142,7 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
           );
         }
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Container();
+          return emptyList();
         }
         List<QrCodeModel> qrCodes = snapshot.data!;
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -158,6 +158,42 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget emptyList() {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.qr_code_rounded,
+            size: 150,
+            color: Colors.grey[400],
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Your QR Codes Gallery is Empty',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black54,
+            ),
+          ),
+          SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Text(
+              "It seems you haven't saved any QR codes. Start scanning and saving them, and they will appear here automatically.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
