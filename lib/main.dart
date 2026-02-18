@@ -23,12 +23,12 @@ class MyApp extends StatelessWidget {
       title: 'QR Code Scanner',
       initialRoute: HomeScreen.routeName,
       routes: {
-        HomeScreen.routeName: (context) => HomeScreen(),
-        ScannerResultScreen.routeName: (context) => ScannerResultScreen(),
-        SavedQrCodeScreen.routeName: (context) => SavedQrCodeScreen(),
-        QrCodeDetailScreen.routeName: (context) => QrCodeDetailScreen(),
+        HomeScreen.routeName: (context) => const HomeScreen(),
+        ScannerResultScreen.routeName: (context) => const ScannerResultScreen(),
+        SavedQrCodeScreen.routeName: (context) => const SavedQrCodeScreen(),
+        QrCodeDetailScreen.routeName: (context) => const QrCodeDetailScreen(),
         CameraPermissionDisabledScreen.routeName: (context) =>
-            CameraPermissionDisabledScreen(),
+            const CameraPermissionDisabledScreen(),
       },
     );
   }

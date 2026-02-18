@@ -56,7 +56,7 @@ class _CameraPermissionDisabledScreenState
         child: Align(
           alignment: Alignment.center,
           child: Container(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               vertical: 20,
               horizontal: 40,
             ),
@@ -90,7 +90,7 @@ class _CameraPermissionDisabledScreenState
   }
 
   Widget message() {
-    return Column(
+    return const Column(
       spacing: 10,
       children: [
         Text(
@@ -115,7 +115,7 @@ class _CameraPermissionDisabledScreenState
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             vertical: 10,
             horizontal: 10,
           ),
@@ -125,7 +125,7 @@ class _CameraPermissionDisabledScreenState
           ),
           child: Text(
             label,
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
             textAlign: TextAlign.center,
           ),
         ),

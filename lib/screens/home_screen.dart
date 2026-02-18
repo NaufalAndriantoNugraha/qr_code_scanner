@@ -24,11 +24,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool isFlashlightOn = false;
   bool isScanning = false;
+  bool isCameraPermissionGranted = false;
 
   @override
   void initState() {
     super.initState();
-    checkCameraPermission();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await checkCameraPermission();
+    });
   }
 
   void toggleFlashlight() {
@@ -39,8 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> checkCameraPermission() async {
-    await Future.delayed(Duration(seconds: 5));
-    var status = await Permission.camera.status;
+    var status = await Permission.camera.request();
     if (status.isDenied || status.isPermanentlyDenied) {
       if (mounted) {
         Navigator.pushReplacementNamed(
@@ -48,6 +50,10 @@ class _HomeScreenState extends State<HomeScreen> {
           CameraPermissionDisabledScreen.routeName,
         );
       }
+    } else {
+      setState(() {
+        isCameraPermissionGranted = true;
+      });
     }
   }
 
@@ -78,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> pickImageFromGallery() async {
-    ImagePicker imagePicker = ImagePicker();
+    final imagePicker = ImagePicker();
     XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       scanImageFromGallery(image.path);
@@ -108,29 +114,31 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            MobileScanner(
-              controller: scannerController,
-              onDetect: onDetect,
-            ),
-            Align(
-              alignment: Alignment(0, -0.25),
-              child: CustomPaint(
-                size: Size(280, 280),
-                painter: ScannerFrame(),
+      body: isCameraPermissionGranted == false
+          ? const Center(child: CircularProgressIndicator())
+          : SafeArea(
+              child: Stack(
+                children: [
+                  MobileScanner(
+                    controller: scannerController,
+                    onDetect: onDetect,
+                  ),
+                  Align(
+                    alignment: const Alignment(0, -0.25),
+                    child: CustomPaint(
+                      size: const Size(280, 280),
+                      painter: ScannerFrame(),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 60,
+                    left: 0,
+                    right: 0,
+                    child: scannerButtons(),
+                  ),
+                ],
               ),
             ),
-            Positioned(
-              bottom: 60,
-              left: 0,
-              right: 0,
-              child: scannerButtons(),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -170,8 +178,10 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Saved QR Code',
               foregroundColor: Colors.white,
               backgroundColor: Colors.black,
-              onTap: () =>
-                  Navigator.pushNamed(context, SavedQrCodeScreen.routeName),
+              onTap: () => Navigator.pushNamed(
+                context,
+                SavedQrCodeScreen.routeName,
+              ),
             ),
           ],
         ),

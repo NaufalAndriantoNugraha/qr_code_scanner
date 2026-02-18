@@ -42,9 +42,9 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
         scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.navigate_before, size: 30),
+          icon: const Icon(Icons.navigate_before, size: 30),
         ),
-        title: Text('QR Code Scanner'),
+        title: const Text('QR Code Scanner'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -67,7 +67,7 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
   Widget qrCodeView(String qrCodeLink) {
     return Container(
       width: 330,
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -82,7 +82,7 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
             onTap: () => openUrl(qrCodeLink),
             child: Container(
               width: 280,
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
               decoration: BoxDecoration(
                 border: BoxBorder.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(8),
@@ -91,13 +91,16 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
                 spacing: 10,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.open_in_new, color: Colors.black),
+                  const Icon(Icons.open_in_new, color: Colors.black),
                   Flexible(
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Text(
                         qrCodeLink,
-                        style: TextStyle(color: Colors.black, fontSize: 18),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                        ),
                       ),
                     ),
                   ),
@@ -142,14 +145,14 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
               focusColor: Colors.black,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.black),
+                borderSide: const BorderSide(color: Colors.black),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.black),
+                borderSide: const BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(backgroundColor: Colors.white),
+            style: const TextStyle(backgroundColor: Colors.white),
           ),
         ),
         Column(

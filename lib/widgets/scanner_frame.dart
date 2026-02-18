@@ -11,8 +11,9 @@ class ScannerFrame extends CustomPainter {
 
     final width = size.width;
     final height = size.height;
-    final len = 30.0;
-    final radius = 12.0;
+
+    const len = 30.0;
+    const radius = 12.0;
 
     canvas.drawPath(
       Path()

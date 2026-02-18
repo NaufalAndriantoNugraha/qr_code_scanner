@@ -1,5 +1,5 @@
 import 'dart:ui';
 
 class MyCustomColors {
-  static Color gray = Color.fromRGBO(242, 242, 242, 1);
+  static Color gray = const Color.fromRGBO(242, 242, 242, 1);
 }

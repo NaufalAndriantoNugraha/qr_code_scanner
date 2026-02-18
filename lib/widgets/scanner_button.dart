@@ -27,7 +27,7 @@ class ScannerButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: width,
-        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(8),

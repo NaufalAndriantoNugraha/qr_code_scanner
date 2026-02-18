@@ -41,9 +41,9 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
         scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.navigate_before, size: 30),
+          icon: const Icon(Icons.navigate_before, size: 30),
         ),
-        title: Text('QR Code Scanner'),
+        title: const Text('QR Code Scanner'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -67,13 +67,13 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
   Widget qrCodeTips() {
     return Container(
       width: 330,
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         border: BoxBorder.all(color: Colors.black),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
+      child: const Row(
         spacing: 10,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -89,7 +89,10 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
   Widget qrCodeView(String qrCode) {
     return Container(
       width: 330,
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+      padding: const EdgeInsets.symmetric(
+        vertical: 20,
+        horizontal: 15,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -114,7 +117,7 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
       onTap: () => openUrl(qrCode),
       child: Container(
         width: 280,
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           vertical: 12,
           horizontal: 8,
         ),
@@ -126,13 +129,13 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
           spacing: 10,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.open_in_new, color: Colors.black),
+            const Icon(Icons.open_in_new, color: Colors.black),
             Flexible(
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Text(
                   qrCode,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 18,
                   ),
@@ -164,14 +167,14 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
               focusColor: Colors.black,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.black),
+                borderSide: const BorderSide(color: Colors.black),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.black),
+                borderSide: const BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(backgroundColor: Colors.white),
+            style: const TextStyle(backgroundColor: Colors.white),
           ),
         ),
         qrCodeFormButton(qrCodeLink),
@@ -198,7 +201,7 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
       },
       child: Container(
         width: 330,
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           vertical: 15,
           horizontal: 5,
         ),
@@ -206,7 +209,7 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
           color: Colors.black,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Text(
+        child: const Text(
           'SAVE QR CODE',
           textAlign: TextAlign.center,
           style: TextStyle(

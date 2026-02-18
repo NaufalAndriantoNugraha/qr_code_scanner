@@ -11,8 +11,8 @@ class QrCodeSnackbar {
         spacing: 10,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.info, color: Colors.black),
-          Text(message, style: TextStyle(color: Colors.black)),
+          const Icon(Icons.info, color: Colors.black),
+          Text(message, style: const TextStyle(color: Colors.black)),
         ],
       ),
       margin: EdgeInsets.only(

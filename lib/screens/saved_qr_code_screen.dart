@@ -45,19 +45,19 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
         scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.navigate_before, size: 30),
+          icon: const Icon(Icons.navigate_before, size: 30),
         ),
-        title: Text('QR Code Scanner'),
+        title: const Text('QR Code Scanner'),
         centerTitle: true,
         actions: [
           ValueListenableBuilder(
             valueListenable: qrCounter,
             builder: (context, value, child) {
               return Container(
-                margin: EdgeInsets.only(right: 20),
+                margin: const EdgeInsets.only(right: 20),
                 child: Text(
                   value.toString(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -69,7 +69,7 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             vertical: 12,
             horizontal: 8,
           ),
@@ -87,14 +87,14 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
 
   Widget textField() {
     return Container(
-      margin: EdgeInsets.only(left: 4, right: 4, bottom: 4),
+      margin: const EdgeInsets.only(left: 4, right: 4, bottom: 4),
       child: TextField(
         controller: searchController,
         cursorColor: Colors.black,
         onChanged: onSearchChanged,
         decoration: InputDecoration(
           hintText: "Search QR code's name...",
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             vertical: 1,
             horizontal: 5,
           ),
@@ -109,7 +109,7 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none,
           ),
-          prefixIcon: Icon(Icons.search),
+          prefixIcon: const Icon(Icons.search),
           suffixIcon: searchController.text.isNotEmpty
               ? cleanSearchQueryButton()
               : null,
@@ -124,7 +124,7 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
         searchController.text = '';
         onSearchChanged('');
       },
-      icon: Icon(Icons.close_outlined),
+      icon: const Icon(Icons.close_outlined),
     );
   }
 
@@ -133,7 +133,7 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
       future: qrFutureData,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Expanded(
+          return const Expanded(
             child: Center(
               child: CircularProgressIndicator(
                 color: Colors.black,
@@ -171,8 +171,8 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
             size: 150,
             color: Colors.grey[400],
           ),
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             'Your QR Codes Gallery is Empty',
             style: TextStyle(
               fontSize: 18,
@@ -180,7 +180,7 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
               color: Colors.black54,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Text(
@@ -210,8 +210,8 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
@@ -238,7 +238,7 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
           },
         );
       },
-      icon: Icon(Icons.delete),
+      icon: const Icon(Icons.delete),
     );
   }
 
@@ -268,7 +268,10 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
         children: [
           Text(
             qrCode.name,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+            ),
           ),
           Text(qrCode.link),
         ],

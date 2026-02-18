@@ -28,7 +28,10 @@ class QrCodeButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: width,
-        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
+        padding: const EdgeInsets.symmetric(
+          vertical: 15,
+          horizontal: 5,
+        ),
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(8),

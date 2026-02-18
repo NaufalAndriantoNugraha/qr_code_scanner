@@ -38,7 +38,10 @@ class QrCodeDialog extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+          padding: const EdgeInsets.symmetric(
+            vertical: 8,
+            horizontal: 5,
+          ),
           decoration: BoxDecoration(
             color: Colors.black,
             borderRadius: BorderRadius.circular(8),
@@ -46,7 +49,7 @@ class QrCodeDialog extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
