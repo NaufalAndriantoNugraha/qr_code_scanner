@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qr_code_scanner/cubits/qr_code_cubit.dart';
 import 'package:qr_code_scanner/models/qr_code_model.dart';
 import 'package:qr_code_scanner/widgets/qr_code_button.dart';
 import 'package:qr_code_scanner/widgets/qr_code_snackbar.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../services/database.dart';
 import '../styles/my_custom_colors.dart';
@@ -21,12 +22,6 @@ class QrCodeDetailScreen extends StatefulWidget {
 class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
   QrCodeDatabase qrCodeDatabase = QrCodeDatabase();
   TextEditingController qrCodeController = TextEditingController();
-
-  Future<void> openUrl(String url) async {
-    if (!await launchUrl(Uri.parse(url))) {
-      throw Exception('Could not launch $url');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +74,7 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
         children: [
           QrImageView(data: qrCodeLink, size: 290),
           GestureDetector(
-            onTap: () => openUrl(qrCodeLink),
+            onTap: () => context.read<QrCodeCubit>().openUrl(qrCodeLink),
             child: Container(
               width: 280,
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -162,18 +157,17 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
               qrCode: qrCode,
               onTap: () async {
                 String name = qrCodeController.value.text;
-                if (name.isNotEmpty) {
-                  await QrCodeDatabase().updateQrCodeName(
+                if (name.isNotEmpty && mounted) {
+                  context.read<QrCodeCubit>().renameQrCode(
                     qrCode.id!,
                     qrCodeController.text,
                   );
-                  if (mounted) {
-                    SnackBar snackbar = QrCodeSnackbar.build(
-                      context,
-                      message: 'Succesfully rename QR Code!',
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  }
+                  SnackBar snackbar = QrCodeSnackbar.build(
+                    context,
+                    message: 'Succesfully rename QR Code!',
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                  context.read<QrCodeCubit>().getQrCodes();
                 }
               },
               width: 330,
@@ -208,14 +202,13 @@ class _QrCodeDetailScreenState extends State<QrCodeDetailScreen> {
       content:
           "Are you sure want to delete '${qrCode.name}' QR code? This action can't be undo!",
       onTap: () async {
-        if (qrCode.id != null) {
-          await QrCodeDatabase().deleteQrCode(qrCode.id!);
-          if (mounted) {
-            Navigator.popUntil(
-              context,
-              ModalRoute.withName('/saved_qr_code_screen'),
-            );
-          }
+        if (mounted && qrCode.id != null) {
+          context.read<QrCodeCubit>().deleteQrCodes(qrCode.id!);
+          Navigator.popUntil(
+            context,
+            ModalRoute.withName('/saved_qr_code_screen'),
+          );
+          context.read<QrCodeCubit>().getQrCodes();
         }
       },
     );

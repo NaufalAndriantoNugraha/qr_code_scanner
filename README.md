@@ -1,16 +1,13 @@
-# qr_code_scanner
+# QR Code Scanner
 
-A new Flutter project.
+QR Code Scanner adalah aplikasi Android yang memungkinkan pengguna untuk melalukan scan pada kode QR dan menyimpan kode QR QR tersebut.
 
-## Getting Started
+## Fitur-Fitur
 
-This project is a starting point for a Flutter application.
+- Melakukan scan kode QR melalui kamera
+- Melakukan scan kode QR yang terdapat pada gambar
+- Menyimpan kode QR, dengan memberikan nama pada kode QR tersebut
+- Mengganti nama kode QR yang disimpan
+- Menghapus kode QR yang disimpan
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Rekaman

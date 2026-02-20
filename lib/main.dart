@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qr_code_scanner/cubits/qr_code_cubit.dart';
 import 'package:qr_code_scanner/screens/camera_permission_disabled_screen.dart';
 import 'package:qr_code_scanner/screens/home_screen.dart';
 import 'package:qr_code_scanner/screens/qr_code_detail_screen.dart';
@@ -10,7 +12,14 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
-  ]).then((value) => runApp(const MyApp()));
+  ]).then((_) {
+    runApp(
+      BlocProvider<QrCodeCubit>(
+        create: (context) => QrCodeCubit(),
+        child: const MyApp(),
+      ),
+    );
+  });
 }
 
 class MyApp extends StatelessWidget {

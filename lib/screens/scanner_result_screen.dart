@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/models/qr_code_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qr_code_scanner/cubits/qr_code_cubit.dart';
 import 'package:qr_code_scanner/services/database.dart';
 import 'package:qr_code_scanner/styles/my_custom_colors.dart';
 import 'package:qr_code_scanner/widgets/qr_code_snackbar.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ScannerResultScreen extends StatefulWidget {
   static const String routeName = '/scanner_result_screen';
@@ -18,18 +18,6 @@ class ScannerResultScreen extends StatefulWidget {
 class _ScannerResultScreenState extends State<ScannerResultScreen> {
   QrCodeDatabase qrCodeDatabase = QrCodeDatabase();
   TextEditingController qrCodeController = TextEditingController();
-
-  Future<void> openUrl(String url) async {
-    if (!await launchUrl(Uri.parse(url))) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  Future<void> saveQrCode(String name, String link) async {
-    await qrCodeDatabase.insertQrCodes(
-      QrCodeModel(name: name, link: link),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +102,7 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
 
   Widget qrCodeLink(String qrCode) {
     return GestureDetector(
-      onTap: () => openUrl(qrCode),
+      onTap: () => context.read<QrCodeCubit>().openUrl(qrCode),
       child: Container(
         width: 280,
         padding: const EdgeInsets.symmetric(
@@ -187,16 +175,14 @@ class _ScannerResultScreenState extends State<ScannerResultScreen> {
       onTap: () async {
         String name = qrCodeController.value.text.trim();
         String link = qrCodeLink;
-        if (name.isNotEmpty) {
-          await saveQrCode(name, link);
-          if (mounted) {
-            SnackBar snackBar = QrCodeSnackbar.build(
-              context,
-              message: 'Succesfully saved QR Code!',
-            );
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            Navigator.pop(context);
-          }
+        if (mounted && name.isNotEmpty) {
+          context.read<QrCodeCubit>().saveQrCode(name, link);
+          SnackBar snackBar = QrCodeSnackbar.build(
+            context,
+            message: 'Succesfully saved QR Code!',
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Navigator.pop(context);
         }
       },
       child: Container(

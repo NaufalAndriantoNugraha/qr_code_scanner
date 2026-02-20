@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qr_code_scanner/cubits/qr_code_cubit.dart';
 import 'package:qr_code_scanner/models/qr_code_model.dart';
 import 'package:qr_code_scanner/screens/qr_code_detail_screen.dart';
 import 'package:qr_code_scanner/services/database.dart';
@@ -24,16 +26,15 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
   void initState() {
     super.initState();
     qrFutureData = QrCodeDatabase().getQrCodes();
+    context.read<QrCodeCubit>().getQrCodes();
   }
 
   void onSearchChanged(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        qrFutureData = QrCodeDatabase().getQrCodes();
-      } else {
-        qrFutureData = QrCodeDatabase().searchQrCode(query);
-      }
-    });
+    if (query.isEmpty) {
+      context.read<QrCodeCubit>().getQrCodes();
+      return;
+    }
+    context.read<QrCodeCubit>().searchQrCodes(query);
   }
 
   @override
@@ -58,7 +59,7 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
                 child: Text(
                   value.toString(),
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w400,
                     fontSize: 16,
                   ),
                 ),
@@ -129,34 +130,40 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
   }
 
   Widget savedQrCode() {
-    return FutureBuilder(
-      future: qrFutureData,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Expanded(
-            child: Center(
-              child: CircularProgressIndicator(
-                color: Colors.black,
-              ),
+    return BlocBuilder<QrCodeCubit, QrCodeState>(
+      builder: (context, state) {
+        if (state is QrCodeStateLoading) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.black,
+            ),
+          );
+        } else if (state is QrCodeStateError) {
+          return Center(
+            child: Text(state.toString()),
+          );
+        } else if (state is QrCodeStateLoaded) {
+          final qrCodes = state.qrCodes;
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            qrCounter.value = qrCodes.length;
+          });
+
+          if (qrCodes.isEmpty) {
+            return emptyList();
+          }
+
+          return Expanded(
+            child: ListView.builder(
+              itemCount: qrCodes.length,
+              itemBuilder: (context, index) {
+                QrCodeModel currentIndex = qrCodes[index];
+                return listTile(currentIndex);
+              },
             ),
           );
         }
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return emptyList();
-        }
-        List<QrCodeModel> qrCodes = snapshot.data!;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          qrCounter.value = qrCodes.length;
-        });
-        return Expanded(
-          child: ListView.builder(
-            itemCount: qrCodes.length,
-            itemBuilder: (context, index) {
-              QrCodeModel currentIndex = qrCodes[index];
-              return listTile(currentIndex);
-            },
-          ),
-        );
+        return Container();
       },
     );
   }
@@ -247,15 +254,11 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
       title: 'Delete QR Code',
       content:
           "Are you sure want to delete '${qrCode.name}' QR code? This action can't be undo!",
-      onTap: () async {
-        if (mounted) {
-          if (qrCode.id != null) {
-            Navigator.pop(context);
-            await QrCodeDatabase().deleteQrCode(qrCode.id!);
-            setState(() {
-              qrFutureData = QrCodeDatabase().getQrCodes();
-            });
-          }
+      onTap: () {
+        if (mounted && qrCode.id != null) {
+          context.read<QrCodeCubit>().deleteQrCodes(qrCode.id!);
+          Navigator.pop(context);
+          context.read<QrCodeCubit>().getQrCodes();
         }
       },
     );
@@ -269,7 +272,7 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
           Text(
             qrCode.name,
             style: const TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               fontSize: 15,
             ),
           ),
