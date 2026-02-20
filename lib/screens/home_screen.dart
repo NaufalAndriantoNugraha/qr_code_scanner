@@ -76,7 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
           context,
           ScannerResultScreen.routeName,
           arguments: code,
-        ).then((value) {
+        ).then((value) async {
+          await Future.delayed(const Duration(seconds: 2));
           isScanning = false;
         });
       }
