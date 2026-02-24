@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_code_scanner/cubits/qr_code_cubit.dart';
 import 'package:qr_code_scanner/models/qr_code_model.dart';
 import 'package:qr_code_scanner/screens/qr_code_detail_screen.dart';
-import 'package:qr_code_scanner/services/database.dart';
 import 'package:qr_code_scanner/styles/my_custom_colors.dart';
 import 'package:qr_code_scanner/widgets/qr_code_dialog.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -18,14 +17,11 @@ class SavedQrCodeScreen extends StatefulWidget {
 }
 
 class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
-  late Future<List<QrCodeModel>> qrFutureData;
   TextEditingController searchController = TextEditingController();
-  final ValueNotifier<int> qrCounter = ValueNotifier<int>(0);
 
   @override
   void initState() {
     super.initState();
-    qrFutureData = QrCodeDatabase().getQrCodes();
     context.read<QrCodeCubit>().getQrCodes();
   }
 
@@ -51,13 +47,25 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
         title: const Text('QR Code Scanner'),
         centerTitle: true,
         actions: [
-          ValueListenableBuilder(
-            valueListenable: qrCounter,
-            builder: (context, value, child) {
+          BlocBuilder<QrCodeCubit, QrCodeState>(
+            builder: (context, state) {
+              if (state is QrCodeStateLoaded) {
+                final counter = state.qrCodes.length;
+                return Container(
+                  margin: const EdgeInsets.only(right: 20),
+                  child: Text(
+                    counter.toString(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                    ),
+                  ),
+                );
+              }
               return Container(
                 margin: const EdgeInsets.only(right: 20),
                 child: Text(
-                  value.toString(),
+                  0.toString(),
                   style: const TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 16,
@@ -87,35 +95,39 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
   }
 
   Widget textField() {
-    return Container(
-      margin: const EdgeInsets.only(left: 4, right: 4, bottom: 4),
-      child: TextField(
-        controller: searchController,
-        cursorColor: Colors.black,
-        onChanged: onSearchChanged,
-        decoration: InputDecoration(
-          hintText: "Search QR code's name...",
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 1,
-            horizontal: 5,
+    return BlocBuilder<QrCodeCubit, QrCodeState>(
+      builder: (context, state) {
+        return Container(
+          margin: const EdgeInsets.only(left: 4, right: 4, bottom: 4),
+          child: TextField(
+            controller: searchController,
+            cursorColor: Colors.black,
+            onChanged: onSearchChanged,
+            decoration: InputDecoration(
+              hintText: "Search QR code's name...",
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 1,
+                horizontal: 5,
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              focusColor: Colors.white,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide.none,
+              ),
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: searchController.text.isNotEmpty
+                  ? cleanSearchQueryButton()
+                  : null,
+            ),
           ),
-          filled: true,
-          fillColor: Colors.white,
-          focusColor: Colors.white,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
-          ),
-          prefixIcon: const Icon(Icons.search),
-          suffixIcon: searchController.text.isNotEmpty
-              ? cleanSearchQueryButton()
-              : null,
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -144,12 +156,10 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
           );
         } else if (state is QrCodeStateLoaded) {
           final qrCodes = state.qrCodes;
-
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            qrCounter.value = qrCodes.length;
-          });
-
           if (qrCodes.isEmpty) {
+            if (searchController.text.isNotEmpty) {
+              return qrCodeNotFound();
+            }
             return emptyList();
           }
 
@@ -165,6 +175,42 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
         }
         return Container();
       },
+    );
+  }
+
+  Widget qrCodeNotFound() {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.qr_code_rounded,
+            size: 150,
+            color: Colors.grey[400],
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Search Not Found',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black54,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Text(
+              "No QR codes match your search. Make sure the name is correct and that is has been saved.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -212,9 +258,6 @@ class _SavedQrCodeScreenState extends State<SavedQrCodeScreen> {
           QrCodeDetailScreen.routeName,
           arguments: qrCode,
         );
-        setState(() {
-          qrFutureData = QrCodeDatabase().getQrCodes();
-        });
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
