@@ -29,10 +29,20 @@ Pada setiap rilis versi aplikasi, disediakan 3 file apk yang berbeda, yaitu arm6
 - Menghapus kode QR yang disimpan
 - Melihat banyak kode QR yang disimpan
 
-# Tangkapan Layar
+## Tangkapan Layar
 
 |<img src="./assets/scanner_screenshot.jpg" width="250"/>| <img src="./assets/save_qr_code_screenshot.jpg" width="250">|
 
 |<img src="./assets/empty_saved_qr_code_screenshot.jpg" width="250">|<img src="./assets/saved_qr_code_screenshot.jpg" width="250">|
 
 |<img src="./assets/qr_code_detail_screenshot.jpg" width="250">|<img src="./assets/delete_qr_code_screenshot.jpg" width="250">|
+
+## License
+
+This project is not open-source in the traditional sense. The code is available for educational purposes only. Redistribution of APKs or publishing to app stores is strictly prohibited. 
+
+Proyek ini bukan open-source dalam pengertian tradisional. Kode sumber disediakan hanya untuk tujuan pembelajaran. Dilarang keras mendistribusikan ulang file APK atau mempublikasikan aplikasi ini ke toko aplikasi mana pun tanpa izin.
+
+See the [LICENSE](LICENSE) file for more details.
+
+Lihat file [LICENSE](LICENSE) untuk informasi lebih lanjut.
